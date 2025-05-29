@@ -152,13 +152,17 @@ def show_model_block(model_name, X_train, X_test, y_train, y_test, model_idx=0):
     classes = model.classes_
     y_test_bin = label_binarize(y_test, classes=classes)
     roc_auc = roc_auc_score(y_test_bin, Y_pred_proba, average='micro', multi_class='ovr')
+    from sklearn.metrics import accuracy_score, f1_score
+    acc = accuracy_score(y_test, Y_pred)
+    f1 = f1_score(y_test, Y_pred, average='weighted')
+    # Выводим численные метрики
+    st.markdown(f"**Accuracy:** {acc:.3f}  |  **F1-score (weighted):** {f1:.3f}  |  **ROC-AUC (micro):** {roc_auc:.3f}")
     fig, ax = plt.subplots(ncols=2, figsize=(12,5))
     draw_multiclass_roc(y_test, Y_pred_proba, classes, ax[0])
     cm = confusion_matrix(y_test, Y_pred, normalize='true', labels=classes)
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
     disp.plot(ax=ax[1], cmap=plt.cm.Blues, colorbar=False)
     ax[1].set_title('Матрица ошибок')
-    fig.suptitle(f"{model_name} (ROC-AUC: {roc_auc:.3f})")
     st.pyplot(fig)
 
 # --- Блок ручного ввода признаков и предсказания ---
